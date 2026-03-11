@@ -159,11 +159,9 @@ curl http://127.0.0.1:8000/api/images/
 
 ---
 
-## 🖼 Documentation & Flow Diagram
+## 🖼 Demo
 
-See `docs/` for architecture diagrams.  
-
-![Flow Diagram](docs/a_flowchart_infographic_illustrates_an_image_proc.png)
+![Demo GIF](demo_gif/demo.gif)
 
 ---
 
