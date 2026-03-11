@@ -1,0 +1,3 @@
+# Ignore Python virtual environments and .env
+process_env/
+.env

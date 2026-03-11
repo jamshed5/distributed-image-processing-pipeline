@@ -1,0 +1,67 @@
+version: "3.8"
+
+services:
+  # -------------------
+  # Redpanda
+  # -------------------
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: redpanda
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --node-id 0
+      - --check=false
+      - --kafka-addr INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:${REDPANDA_EXTERNAL_PORT}
+      - --advertise-kafka-addr INTERNAL://redpanda:9092,EXTERNAL://localhost:${REDPANDA_EXTERNAL_PORT}
+    ports:
+      - "${REDPANDA_EXTERNAL_PORT}:${REDPANDA_EXTERNAL_PORT}"
+
+  # -------------------
+  # Redpanda UI
+  # -------------------
+  redpanda-ui:
+    image: docker.redpanda.com/redpandadata/console:latest
+    container_name: redpanda-ui
+    depends_on:
+      - redpanda
+    environment:
+      KAFKA_BROKERS: redpanda:9092
+    ports:
+      - "${REDPANDA_UI_PORT}:8080"
+
+  # -------------------
+  # PostgreSQL for Django
+  # -------------------
+  db:
+    image: postgres:15
+    container_name: process_service_db_v2 
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - images_postgres_data:/var/lib/postgresql/data
+
+  # -------------------
+  # Redis for Celery
+  # -------------------
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    command: redis-server --save "" --appendonly no --stop-writes-on-bgsave-error no
+
+# -------------------
+# Top-level Volumes
+# -------------------
+volumes:
+  images_postgres_data: {}

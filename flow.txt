@@ -1,0 +1,65 @@
+┌───────────────┐
+│ Local Images  │
+│   Directory   │
+│  (../images)  │
+└───────┬───────┘
+        │
+        ▼
+┌───────────────────────┐
+│  Python Producer      │
+│  (send_images.py)     │
+│  - Read images        │
+│  - Encode / send to   │
+│    Redpanda topic     │
+└─────────┬─────────────┘
+          │
+          ▼
+┌───────────────────────┐
+│     Redpanda          │
+│   (Kafka-compatible)  │
+│  Topic: images-stream │
+└─────────┬─────────────┘
+          │
+          ▼
+┌─────────────────────────────┐
+│ Django Consumer / Management│
+│ Command (consumer.py)       │
+│  - Polls Redpanda           │
+│  - Forms batch (BATCH_SIZE) │
+│  - Sends batch to Celery    │
+│  - Commits offsets          │
+└─────────┬───────────────────┘
+          │
+          ▼
+┌─────────────────────────────┐
+│  Celery Workers             │
+│  (process_image task)       │
+│  - Resize image             │
+│  - Optional ML / LLM        │
+│  - Save processed image to  │
+│    MEDIA_ROOT/processed_images │
+│  - Save record in PostgreSQL│
+│  - Log results (success/fail)│
+└─────────┬───────────────────┘
+          │
+          ▼
+┌─────────────────────────────┐
+│  PostgreSQL (ProcessedImage)│
+│  - Stores filename & image  │
+│    for admin/API            │
+└─────────┬───────────────────┘
+          │
+          ▼
+┌─────────────────────────────┐
+│  Django REST API            │
+│  Endpoint: /api/images/     │
+│  - Fetch all processed images│
+│  - Return JSON with image URLs│
+└─────────┬───────────────────┘
+          │
+          ▼
+┌─────────────────────────────┐
+│  Frontend / Browser / Postman│
+│  - View list of processed images│
+│  - Access images via MEDIA_URL │
+└─────────────────────────────┘

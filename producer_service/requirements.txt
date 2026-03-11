@@ -1,0 +1,6 @@
+Package         Version
+--------------- -------
+confluent-kafka 2.13.2
+pip             21.1.1
+python-dotenv   1.2.1
+setuptools      56.0.0

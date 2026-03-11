@@ -1,0 +1,25 @@
+# Stop Docker Desktop completely
+taskkill /F /IM "Docker Desktop.exe"
+
+# run compose in the background
+docker compose -f docker-compose.yml up -d
+
+# down services
+docker compose -f docker-compose.yml down
+
+# run consumer
+py manage.py consume_images
+
+# run producer
+# py producer.py 
+
+# postgres inside docker
+docker exec -it process_service_db_v2 psql -U postgres
+
+# 2 worker (True parallelism via multiple processes)
+# Note: Each worker handles only one batch; requires multiple terminals or background processes
+celery -A process_service.celery_app worker --loglevel=info -P solo -n worker1@%h
+celery -A process_service.celery_app worker --loglevel=info -P solo -n worker2@%h
+
+All Process Images
+# http://127.0.0.1:8000/api/images/
