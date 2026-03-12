@@ -181,9 +181,4 @@ git commit -m "Describe your changes"
 git push origin feature/your-feature-name
 ```
 
----
 
-## ⚡ Hashtags for Sharing
-```
-#Python #Django #Celery #Redpanda #PostgreSQL #RealTimeProcessing #DataPipeline #ML #LLM #ImageProcessing #DevOps
-```
